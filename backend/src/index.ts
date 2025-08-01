@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import itemsRouter from './routes/items';
+import citiesRouter from './routes/cities';
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +29,7 @@ app.get('/api/health', (req, res) => {
 
 // API Routes
 app.use('/api/items', itemsRouter);
+app.use('/api/cities', citiesRouter);
 
 // Start server
 app.listen(PORT, () => {
