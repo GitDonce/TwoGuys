@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowRight, Code, Database, Loader2, Plus } from "lucide-react";
+import { Search, ArrowRight, Code, Database, Loader2, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiService, City } from "@/services/api";
+import ServerStatus from "@/components/ServerStatus";
 import vilniusIcon from "@/assets/vilnius-icon.png";
 import utenaIcon from "@/assets/utena-icon.png";
 
@@ -57,7 +59,32 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero">
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Top Navigation */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Database className="w-8 h-8 text-primary" />
+              <span className="text-lg font-semibold">Two Guys</span>
+            </div>
+            <ServerStatus />
+          </div>
+          <div className="flex gap-3">
+            <Link to="/user">
+              <Button variant="outline" className="gap-2">
+                <User className="w-4 h-4" />
+                My Dashboard
+              </Button>
+            </Link>
+            <Link to="/add-city">
+              <Button className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add City
+              </Button>
+            </Link>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
@@ -173,125 +200,9 @@ const Index = () => {
           </div>
         )}
 
-        {/* API Test Section */}
-        <div className="mb-16">
-          <Link to="/api-test" className="block group">
-            <Card className={cn(
-              "transition-all duration-300 hover:shadow-medium border-0 shadow-soft",
-              "group-hover:scale-105 group-hover:-translate-y-2"
-            )}>
-              <CardContent className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-accent-light p-3 group-hover:bg-accent group-hover:scale-110 transition-all duration-300">
-                    <Database className="w-full h-full text-accent-foreground" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">
-                      API Test Dashboard
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Test backend connectivity and API endpoints
-                    </p>
-                  </div>
-                </div>
 
-                <p className="text-muted-foreground mb-6">
-                  Access the interactive dashboard to test the connection between frontend and backend. 
-                  Create, read, update, and delete items through our mock API endpoints.
-                </p>
 
-                <div className="mb-6">
-                  <h4 className="font-semibold text-primary mb-3">Available Features</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      Backend Health Check
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      CRUD Operations
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      Real-time Updates
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      Error Handling
-                    </div>
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-primary font-medium">
-                    Test API Connection
-                  </span>
-                  <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-2 transition-transform" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-
-        {/* Add City CTA */}
-        <div className="text-center mt-16">
-          <Link to="/add-city" className="block group">
-            <Card className={cn(
-              "transition-all duration-300 hover:shadow-medium border-0 shadow-soft",
-              "group-hover:scale-105 group-hover:-translate-y-2 bg-gradient-to-br from-primary/10 to-accent/10"
-            )}>
-              <CardContent className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-primary p-3 group-hover:scale-110 transition-all duration-300">
-                    <Plus className="w-full h-full text-primary-foreground" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">
-                      Add Your City
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Share your local knowledge and help others
-                    </p>
-                  </div>
-                </div>
-
-                <p className="text-muted-foreground mb-6">
-                  Don't see your city? Create a comprehensive onboarding guide with housing, 
-                  dining, transportation, and local insights to help newcomers settle in.
-                </p>
-
-                <div className="mb-6">
-                  <h4 className="font-semibold text-primary mb-3">What You Can Add</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>
-                      Housing & Neighborhoods
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>
-                      Food & Dining
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>
-                      Transportation
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full flex-shrink-0"></div>
-                      Essential Services
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-primary font-medium">
-                    Create City Guide
-                  </span>
-                  <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-2 transition-transform" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
       </div>
     </div>
   );

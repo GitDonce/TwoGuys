@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ApiTest from "./pages/ApiTest";
 import AddCity from "./pages/AddCity";
+import User from "./pages/User";
 import DynamicCityPage from "./components/DynamicCityPage";
 import NotFound from "./pages/NotFound";
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/api-test" element={<ApiTest />} />
           <Route path="/add-city" element={<AddCity />} />
+          <Route path="/user" element={<User />} />
           {/* Dynamic city routes - handles all cities */}
           <Route path="/:cityId" element={<DynamicCityPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
