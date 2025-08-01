@@ -14,11 +14,11 @@ const iconMap: Record<string, React.ReactNode> = {
   Wifi: <Wifi className="w-6 h-6" />
 };
 
-interface DynamicCityPageProps {
+interface CityPageProps {
   cityId?: string;
 }
 
-const DynamicCityPage = ({ cityId: propCityId }: DynamicCityPageProps) => {
+const CityPage = ({ cityId: propCityId }: CityPageProps) => {
   const { cityId: paramsCityId } = useParams<{ cityId: string }>();
   const cityId = propCityId || paramsCityId || '';
   const [city, setCity] = useState<City | null>(null);
@@ -169,4 +169,4 @@ const DynamicCityPage = ({ cityId: propCityId }: DynamicCityPageProps) => {
   );
 };
 
-export default DynamicCityPage; 
+export default CityPage; 
