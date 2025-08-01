@@ -4,9 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import Vilnius from "./pages/Vilnius";
-import Utena from "./pages/Utena";
-import ApiTest from "./pages/ApiTest";
+import AddCity from "./pages/AddCity";
+import User from "./pages/User";
+import CityPage from "./components/CityPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,9 +19,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/vilnius" element={<Vilnius />} />
-          <Route path="/utena" element={<Utena />} />
-          <Route path="/api-test" element={<ApiTest />} />
+          <Route path="/add-city" element={<AddCity />} />
+          <Route path="/user" element={<User />} />
+          {/* Dynamic city routes - handles all cities */}
+          <Route path="/:cityId" element={<CityPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

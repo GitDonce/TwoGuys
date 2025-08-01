@@ -1,48 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowRight, Code, Database } from "lucide-react";
+import { Search, ArrowRight, Code, Database, Loader2, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { apiService, City } from "@/services/api";
 import vilniusIcon from "@/assets/vilnius-icon.png";
 import utenaIcon from "@/assets/utena-icon.png";
 
-interface City {
-  id: string;
-  name: string;
-  country: string;
-  description: string;
-  population: string;
-  highlights: string[];
-  icon: string;
-  path: string;
-}
 
-const cities: City[] = [
-  {
-    id: "vilnius",
-    name: "Vilnius",
-    country: "Lithuania",
-    description: "Lithuania's vibrant capital city with rich history and modern amenities",
-    population: "580,000",
-    highlights: ["UNESCO Old Town", "Bohemian Užupis District", "Modern Business Centers", "Rich Cultural Scene"],
-    icon: vilniusIcon,
-    path: "/vilnius"
-  },
-  {
-    id: "utena",
-    name: "Utena",
-    country: "Lithuania",
-    description: "Peaceful lakeside city perfect for nature lovers and quiet living",
-    population: "27,000",
-    highlights: ["Beautiful Lakes", "Aukštaitija National Park", "Peaceful Environment", "Lower Living Costs"],
-    icon: utenaIcon,
-    path: "/utena"
-  }
-];
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [cities, setCities] = useState<City[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Icon mapping for cities (since API stores paths, not imported assets)
+  const cityIcons: Record<string, string> = {
+    vilnius: vilniusIcon,
+    utena: utenaIcon
+  };
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getCities();
+        if (response.success && response.data) {
+          // Map API cities to include proper icon assets
+          const citiesWithIcons = response.data.map(city => ({
+            ...city,
+            icon: cityIcons[city.id] || city.icon
+          }));
+          setCities(citiesWithIcons);
+        } else {
+          setError('Failed to load cities');
+        }
+      } catch (err) {
+        setError('Failed to connect to server');
+        console.error('Error fetching cities:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCities();
+  }, []);
 
   const filteredCities = cities.filter(city =>
     city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -53,7 +58,29 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero">
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Top Navigation */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-2">
+            <Database className="w-8 h-8 text-primary" />
+            <span className="text-lg font-semibold">Two Guys</span>
+          </div>
+          <div className="flex gap-3">
+            <Link to="/user">
+              <Button variant="outline" className="gap-2">
+                <User className="w-4 h-4" />
+                My Dashboard
+              </Button>
+            </Link>
+            <Link to="/add-city">
+              <Button className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add City
+              </Button>
+            </Link>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
@@ -76,9 +103,30 @@ const Index = () => {
           </div>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-muted-foreground">Loading cities...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-16">
+            <div className="text-red-500 text-lg mb-4">
+              {error}
+            </div>
+            <p className="text-muted-foreground">
+              Please check that the backend server is running on port 3001.
+            </p>
+          </div>
+        )}
+
         {/* Cities Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          {filteredCities.map((city) => (
+        {!loading && !error && (
+          <div className="grid md:grid-cols-2 gap-8 mb-16">
+            {filteredCities.map((city) => (
             <Link key={city.id} to={city.path} className="block group">
               <Card className={cn(
                 "transition-all duration-300 hover:shadow-medium border-0 shadow-soft",
@@ -131,12 +179,13 @@ const Index = () => {
                   </div>
                 </CardContent>
               </Card>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
 
         {/* No Results */}
-        {filteredCities.length === 0 && (
+        {!loading && !error && filteredCities.length === 0 && (
           <div className="text-center py-16">
             <div className="text-muted-foreground text-lg mb-4">
               No cities found matching "{searchTerm}"
@@ -147,76 +196,9 @@ const Index = () => {
           </div>
         )}
 
-        {/* API Test Section */}
-        <div className="mb-16">
-          <Link to="/api-test" className="block group">
-            <Card className={cn(
-              "transition-all duration-300 hover:shadow-medium border-0 shadow-soft",
-              "group-hover:scale-105 group-hover:-translate-y-2"
-            )}>
-              <CardContent className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-xl bg-accent-light p-3 group-hover:bg-accent group-hover:scale-110 transition-all duration-300">
-                    <Database className="w-full h-full text-accent-foreground" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground mb-1">
-                      API Test Dashboard
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Test backend connectivity and API endpoints
-                    </p>
-                  </div>
-                </div>
 
-                <p className="text-muted-foreground mb-6">
-                  Access the interactive dashboard to test the connection between frontend and backend. 
-                  Create, read, update, and delete items through our mock API endpoints.
-                </p>
 
-                <div className="mb-6">
-                  <h4 className="font-semibold text-primary mb-3">Available Features</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      Backend Health Check
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      CRUD Operations
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      Real-time Updates
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
-                      Error Handling
-                    </div>
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-primary font-medium">
-                    Test API Connection
-                  </span>
-                  <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-2 transition-transform" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-
-        {/* Footer CTA */}
-        <div className="text-center mt-16 p-8 bg-card/50 rounded-xl border border-border/50">
-          <h3 className="text-lg font-semibold mb-2">Don't See Your City?</h3>
-          <p className="text-muted-foreground mb-4">
-            We're continuously adding new cities to our onboarding platform.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Contact us to suggest a new city or contribute local knowledge.
-          </p>
-        </div>
       </div>
     </div>
   );

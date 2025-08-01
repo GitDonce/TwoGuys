@@ -63,7 +63,4 @@ temp/
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
-
-# Local JSON data storage (backend)
-backend/data/ 
+*.sw? 

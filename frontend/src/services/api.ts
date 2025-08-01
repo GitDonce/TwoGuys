@@ -8,6 +8,36 @@ export interface Item {
   createdAt: string;
 }
 
+export interface InfoSection {
+  title: string;
+  items: string[];
+}
+
+export interface LinkButton {
+  text: string;
+  href: string;
+}
+
+export interface CitySection {
+  title: string;
+  icon: string; // lucide icon name
+  defaultExpanded?: boolean;
+  infoSections: InfoSection[];
+  links: LinkButton[];
+}
+
+export interface City {
+  id: string;
+  name: string;
+  country: string;
+  description: string;
+  population: string;
+  highlights: string[];
+  icon: string;
+  path: string;
+  sections?: CitySection[];
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -64,6 +94,35 @@ class ApiService {
 
   async deleteItem(id: string): Promise<ApiResponse<Item>> {
     return this.request<Item>(`/items/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Cities API
+  async getCities(): Promise<ApiResponse<City[]>> {
+    return this.request<City[]>('/cities');
+  }
+
+  async getCity(id: string): Promise<ApiResponse<City>> {
+    return this.request<City>(`/cities/${id}`);
+  }
+
+  async createCity(city: Omit<City, 'id'>): Promise<ApiResponse<City>> {
+    return this.request<City>('/cities', {
+      method: 'POST',
+      body: JSON.stringify(city),
+    });
+  }
+
+  async updateCity(id: string, updates: Partial<Omit<City, 'id'>>): Promise<ApiResponse<City>> {
+    return this.request<City>(`/cities/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+  }
+
+  async deleteCity(id: string): Promise<ApiResponse<City>> {
+    return this.request<City>(`/cities/${id}`, {
       method: 'DELETE',
     });
   }
