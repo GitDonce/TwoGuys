@@ -46,11 +46,22 @@ export interface ApiResponse<T> {
 }
 
 class ApiService {
+  private getAuthHeaders(): Record<string, string> {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      return {
+        'Authorization': `Bearer ${token}`,
+      };
+    }
+    return {};
+  }
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
+          ...this.getAuthHeaders(),
           ...options.headers,
         },
         ...options,
@@ -125,6 +136,11 @@ class ApiService {
     return this.request<City>(`/cities/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  // User-specific Cities API
+  async getUserCities(): Promise<ApiResponse<City[]>> {
+    return this.request<City[]>('/user/cities');
   }
 
   // Health check

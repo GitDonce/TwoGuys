@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowRight, Code, Database, Loader2, Plus, User } from "lucide-react";
+import { Search, ArrowRight, Code, Database, Loader2, Plus, User, LogOut, LogIn, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiService, City } from "@/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 import vilniusIcon from "@/assets/vilnius-icon.png";
 import utenaIcon from "@/assets/utena-icon.png";
 
@@ -16,6 +17,7 @@ const Index = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, user, logout } = useAuth();
 
   // Icon mapping for cities (since API stores paths, not imported assets)
   const cityIcons: Record<string, string> = {
@@ -66,18 +68,50 @@ const Index = () => {
             <span className="text-lg font-semibold">Two Guys</span>
           </div>
           <div className="flex gap-3">
-            <Link to="/user">
-              <Button variant="outline" className="gap-2">
-                <User className="w-4 h-4" />
-                My Dashboard
-              </Button>
-            </Link>
-            <Link to="/add-city">
-              <Button className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add City
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              // Authenticated user navigation
+              <>
+                <span className="text-sm text-muted-foreground self-center">
+                  Welcome, {user?.email}
+                </span>
+                <Link to="/user">
+                  <Button variant="outline" className="gap-2">
+                    <User className="w-4 h-4" />
+                    My Dashboard
+                  </Button>
+                </Link>
+                <Link to="/add-city">
+                  <Button variant="outline" className="gap-2">
+                    <Plus className="w-4 h-4" />
+                    Add City
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  className="gap-2" 
+                  onClick={logout}
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              // Unauthenticated user navigation
+              <>
+                <Link to="/login">
+                  <Button variant="outline" className="gap-2">
+                    <LogIn className="w-4 h-4" />
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button className="gap-2">
+                    <UserPlus className="w-4 h-4" />
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

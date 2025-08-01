@@ -37,6 +37,7 @@ export interface City {
   icon: string;
   path: string;
   sections?: CitySection[];
+  userId?: string;
 }
 
 class DataStorage {
@@ -572,11 +573,12 @@ class DataStorage {
     return cities.find(city => city.id === id);
   }
 
-  addCity(city: Omit<City, 'id'>): City {
+  addCity(city: Omit<City, 'id'>, userId: string): City {
     const cities = this.readCities();
     const newCity: City = {
       id: city.name.toLowerCase().replace(/\s+/g, '-'),
-      ...city
+      ...city,
+      userId
     };
     
     cities.push(newCity);
@@ -612,6 +614,18 @@ class DataStorage {
     const deletedCity = cities.splice(cityIndex, 1)[0];
     this.writeCities(cities);
     return deletedCity;
+  }
+
+  // Check if a city belongs to a specific user
+  isCityOwnedByUser(cityId: string, userId: string): boolean {
+    const city = this.getCityById(cityId);
+    return city?.userId === userId;
+  }
+
+  // Get all cities owned by a specific user
+  getCitiesByUser(userId: string): City[] {
+    const cities = this.readCities();
+    return cities.filter(city => city.userId === userId);
   }
 }
 
