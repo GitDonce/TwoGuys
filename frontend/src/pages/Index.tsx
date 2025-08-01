@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Search, ArrowRight, Code, Database, Loader2, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiService, City } from "@/services/api";
-import ServerStatus from "@/components/ServerStatus";
 import vilniusIcon from "@/assets/vilnius-icon.png";
 import utenaIcon from "@/assets/utena-icon.png";
 
@@ -62,12 +61,9 @@ const Index = () => {
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Top Navigation */}
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Database className="w-8 h-8 text-primary" />
-              <span className="text-lg font-semibold">Two Guys</span>
-            </div>
-            <ServerStatus />
+          <div className="flex items-center gap-2">
+            <Database className="w-8 h-8 text-primary" />
+            <span className="text-lg font-semibold">Two Guys</span>
           </div>
           <div className="flex gap-3">
             <Link to="/user">

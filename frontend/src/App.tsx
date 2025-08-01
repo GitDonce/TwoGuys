@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import ApiTest from "./pages/ApiTest";
 import AddCity from "./pages/AddCity";
 import User from "./pages/User";
 import DynamicCityPage from "./components/DynamicCityPage";
@@ -20,7 +19,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/api-test" element={<ApiTest />} />
           <Route path="/add-city" element={<AddCity />} />
           <Route path="/user" element={<User />} />
           {/* Dynamic city routes - handles all cities */}
