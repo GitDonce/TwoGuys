@@ -221,7 +221,8 @@
           }
         ]
       }
-    ]
+    ],
+    "userId": "admin-001"
   },
   {
     "id": "utena",
@@ -430,7 +431,8 @@
           }
         ]
       }
-    ]
+    ],
+    "userId": "admin-001"
   },
   {
     "id": "kaunas",
@@ -443,7 +445,8 @@
       "University City"
     ],
     "icon": "/src/assets/vilnius-icon.png",
-    "path": "/kaunas"
+    "path": "/kaunas",
+    "userId": "admin-001"
   },
   {
     "id": "trakai",
@@ -500,6 +503,7 @@
           }
         ]
       }
-    ]
+    ],
+    "userId": "admin-001"
   }
 ]
