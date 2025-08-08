@@ -6,39 +6,56 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Plus, MapPin, Users, Edit, Trash2, Eye, Home } from "lucide-react";
 import { apiService, City } from "@/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const User = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user, isAuthenticated } = useAuth();
 
-  // Simple user data (no auth for now)
-  const user = {
-    name: "City Contributor",
-    email: "contributor@example.com",
-    joinDate: "November 2024"
+  // Calculate join date from user ID (basic implementation)
+  const getJoinDate = (userId: string) => {
+    if (userId === 'admin-001') {
+      return 'November 2024';
+    }
+    // For generated user IDs, extract timestamp
+    try {
+      const timestamp = parseInt(userId.split('-')[1]);
+      return new Date(timestamp).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long' 
+      });
+    } catch {
+      return 'Recently';
+    }
   };
 
   useEffect(() => {
-    const fetchCities = async () => {
+    const fetchUserCities = async () => {
+      if (!isAuthenticated || !user) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        const response = await apiService.getCities();
+        const response = await apiService.getUserCities();
         if (response.success) {
           setCities(response.data || []);
         } else {
-          setError('Failed to load cities');
+          setError('Failed to load your cities');
         }
       } catch (err) {
-        setError('Failed to load cities');
-        console.error('Error fetching cities:', err);
+        setError('Failed to load your cities');
+        console.error('Error fetching user cities:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCities();
-  }, []);
+    fetchUserCities();
+  }, [isAuthenticated, user]);
 
   const handleDeleteCity = async (cityId: string) => {
     if (!confirm('Are you sure you want to delete this city?')) {
@@ -92,9 +109,13 @@ const User = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold">{user.name}</h3>
-                <p className="text-muted-foreground">{user.email}</p>
-                <p className="text-sm text-muted-foreground">Member since {user.joinDate}</p>
+                <h3 className="text-lg font-semibold">
+                  {user?.email?.split('@')[0] || 'City Contributor'}
+                </h3>
+                <p className="text-muted-foreground">{user?.email}</p>
+                <p className="text-sm text-muted-foreground">
+                  Member since {user?.id ? getJoinDate(user.id) : 'Recently'}
+                </p>
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-primary">{cities.length}</div>
